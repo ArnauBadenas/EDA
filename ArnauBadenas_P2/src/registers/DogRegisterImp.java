@@ -8,9 +8,11 @@ import java.util.*;
 
 public class DogRegisterImp implements DogRegister{
 
-    private Map<String, SortedSet<Dog>> owners = new HashMap<>();
+    private final Map<String, SortedSet<Dog>> owners;
 
-    public DogRegisterImp(){}
+    public DogRegisterImp(){
+        owners = new HashMap<>();
+    }
 
 
     @Override
@@ -27,41 +29,54 @@ public class DogRegisterImp implements DogRegister{
         if(!owners.containsKey(owner)) throw new UnknownOwnerException("El owner especificat no ha sigut registrat");
 
         String dogOwner = findOwner(dog.getId());
-        if(dogOwner != null && !Objects.equals(owner, dogOwner)) throw new DifferentOwnerException();
+        if(dogOwner != null && !owner.equals(dogOwner)) throw new DifferentOwnerException();
 
-        if(this.registeredDogs(owner).contains(dog)){
+        if(getCurrentRegisteredDogs(owner).contains(dog)){
             return false;
         }
-        this.registeredDogs(owner).add(dog);
+        getCurrentRegisteredDogs(owner).add(dog);
         return true;
     }
 
     @Override
     public String findOwner(DogID id) {
-        for (Map.Entry<String, SortedSet<Dog>> owner: owners.entrySet()){
-            for(Dog dog : owner.getValue()){
+        for (String owner: owners.keySet()){
+            for(Dog dog : owners.get(owner)){
                 if (dog.getId().equals(id)){
-                    return owner.getKey();
+                    return owner;
                 }
             }
         }
 
-
         return null;
     }
 
+    /*
+    * Funció privada editable
+    * */
+    private SortedSet<Dog> getCurrentRegisteredDogs(String owner) {
+        return owners.get(owner);
+    }
+    /*
+    * Funció pública que retorna copia, per evitar la edició de les dades originals desde fora de la classe.
+    * */
     @Override
     public SortedSet<Dog> registeredDogs(String owner) {
-        return owners.get(owner);
+        return new TreeSet<>(getCurrentRegisteredDogs(owner));
     }
 
     @Override
     public SortedSet<String> findPurposeOwners(DogPurpose purpose) {
+
         SortedSet<String> purposeOwners = new TreeSet<>();
-        for (Map.Entry<String, SortedSet<Dog>> owner : owners.entrySet()){
-            for (Dog dog : owner.getValue()){
-                if(dog.getType().equals(purpose)){
-                    purposeOwners.add(owner.getKey());
+
+        for (String owner : owners.keySet()){
+            boolean found = false;
+            Iterator<Dog> iterator = owners.get(owner).iterator();
+            while(iterator.hasNext() && !found){
+                if(iterator.next().getType().equals(purpose)){
+                    purposeOwners.add(owner);
+                    found=true;
                 }
             }
         }
