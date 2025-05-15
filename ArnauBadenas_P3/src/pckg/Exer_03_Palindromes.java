@@ -11,12 +11,38 @@ public class Exer_03_Palindromes {
 	public static void main (String [] args) {
 		/* COMPLETE */
 		// Using functions genPalindrom and genNoPalindrom, test your code here
+		for (int i = 0; i < 100; i++) {
+			String palindrom = genPalindrome();
+			if(!isPalindrome(palindrom)){
+				System.out.println("Test failed with word "+palindrom);
+			}
+		}
+
+		for (int i = 0; i < 100; i++) {
+			String noPalindrom = genNoPalindrome();
+			if(isPalindrome(noPalindrom)){
+				System.out.println("Test failed with word "+noPalindrom);
+			}
+		}
+
+		System.out.println("Test finished.");
 
 	}
 	
 	/* COMPLETE */
 	// write here the code to determine whether a string is a palindrome or not
-
+	public static boolean isPalindrome(String word){
+		return subWord(word,0,word.length()-1);
+	}
+	public static boolean subWord(String word, int startIndex, int endIndex){
+		if (startIndex>= endIndex){ //Paraula ja iterada
+			return true;
+		}
+		if (word.charAt(startIndex) != word.charAt(endIndex)){
+			return false;
+		}
+		return subWord(word,startIndex+1,endIndex-1);
+	}
 	
 	/*DO NOT MODIFY CODE BELOW*/
 	private static String genPalindrome() {
