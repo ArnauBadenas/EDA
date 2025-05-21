@@ -31,7 +31,7 @@ public class DogRegisterImp implements DogRegister{
         String dogOwner = findOwner(dog.getId());
         if(dogOwner != null && !owner.equals(dogOwner)) throw new DifferentOwnerException();
 
-        if(getCurrentRegisteredDogs(owner).contains(dog)){
+        if(getCurrentRegisteredDogs(owner).contains(dog) || getCurrentRegisteredDogs(owner) == null){
             return false;
         }
         getCurrentRegisteredDogs(owner).add(dog);
